@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:quickchess/model/config.dart';
 import 'package:quickchess/model/chessboard.dart';
 
 class BoardPainter extends CustomPainter{
@@ -43,33 +42,36 @@ class BoardPainter extends CustomPainter{
     for(int i=0;i<15;++i){
       for(int j=0;j<15;j++){
         if(event[i*15+j]=='@'){
-          canvas.drawCircle(Offset((j)*width,i*width), 8, blackPen);
+          canvas.drawCircle(Offset((j+1)*width,i*width), 8, blackPen);
         }else if(event[i*15+j]=='#'){
-          canvas.drawCircle(Offset((j)*width,i*width), 8, whitePen);
+          canvas.drawCircle(Offset((j+1)*width,i*width), 8, whitePen);
         }
       }
     }
     /*List lastPoint;
     lastPoint=chessInfo.events.last;*/
-    if(chessInfo.events.last.isNotEmpty) {
-     canvas.drawCircle(Offset(chessInfo.events.last[1]*width,chessInfo.events.last[2]*width), 3, redPen);
+    if(chessInfo!=null && chessInfo.events.length>0) {
+     canvas.drawCircle(Offset((chessInfo.events.last[1]+1)*width,chessInfo.events.last[2]*width), 3, redPen);
     }
 
     if(currentPoint.isNotEmpty){
       var tmp = event[currentPoint[2]*15+currentPoint[1]];
       if(tmp!='@' && tmp != '#'){
-        canvas.drawCircle(Offset(currentPoint[1]*width,currentPoint[2]*width), 8, redPen);
+        canvas.drawCircle(Offset((currentPoint[1]+1)*width,currentPoint[2]*width), 8, redPen);
       }
     }
   }
 
   @override
   bool shouldRepaint(BoardPainter op){
+    if(chessInfo==null){
+      return false;
+    }
     if(currentPoint.isNotEmpty && op.currentPoint.isNotEmpty){
-      return (event.length!=op.event.length)||currentPoint[1]!=op.currentPoint[1]||currentPoint[2]!=op.currentPoint[2];
+      return (op.chessInfo==null)||(chessInfo.events.length!=op.chessInfo.events.length)||currentPoint[1]!=op.currentPoint[1]||currentPoint[2]!=op.currentPoint[2];
     }
     else{
-      return (event.length!=op.event.length);
+      return (currentPoint.isNotEmpty && op.currentPoint.isEmpty)||(op.chessInfo==null)||(chessInfo.events.length!=op.chessInfo.events.length);
     }
   }
 }

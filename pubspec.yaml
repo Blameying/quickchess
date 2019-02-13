@@ -44,6 +44,7 @@ flutter:
     - images/no.png
     - images/箭头.png
     - images/气泡.png
+    - images/flash.png
     - config/config.json
   fonts: 
     - family: times

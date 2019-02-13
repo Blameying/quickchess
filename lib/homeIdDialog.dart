@@ -2,18 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:quickchess/chessPage.dart';
 import 'package:quickchess/model/config.dart';
-import 'package:dio/dio.dart';
-import 'dart:convert';
-import 'dart:async';
 
 
 class HomeIdDialog extends Dialog{
-  final TextEditingController controller = new TextEditingController();
+  TextEditingController controller;
   final DataStore dataStore = new DataStore(text: "");
   final String token;
 
   HomeIdDialog({Key key,@required String text,@required this.token}):super(key: key){
     this.dataStore.text = text;
+    controller=new TextEditingController();
   }
 
   @override
@@ -79,6 +77,11 @@ class HomeIdDialog extends Dialog{
                         borderRadius: BorderRadius.circular(8.0)
                       )
                     ),
+                    onChanged: (String s){
+                      print(s);
+                      print(controller.value);
+                      print(controller.text);
+                    },
                   ),
                 ),
                 new Expanded(

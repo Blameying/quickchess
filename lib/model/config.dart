@@ -1,6 +1,7 @@
 import 'package:device_info/device_info.dart';
 import 'package:dio/dio.dart';
 import 'dart:convert';
+import 'dart:core';
 import 'package:quickchess/model/chessboard.dart';
 class Config{
 
@@ -8,8 +9,7 @@ class Config{
   static final int player_2 = 2;
   static final int visitor = 3;
 
-  Config(){
-  }
+  Config();
 
   static String getLoginUrl(){
     return "http://47.100.124.210:4567/api/login";
@@ -33,6 +33,10 @@ class Config{
 
   static String getSendStepUrl(){
     return "http://47.100.124.210:4567/api/send/gamestep";
+  }
+
+  static String getRestartGameUrl(){
+    return "http://47.100.124.210:4567/api/restart/game";
   }
 
   static Future<String> getDeviceId() async {
@@ -110,6 +114,19 @@ class Config{
   static Future<ChessBoard> sendStepData(String token,String room,List step) async {
     Dio dio = new Dio();
     Response response=await dio.post(getSendStepUrl(),data:{"token":token,"game_id":room,"step":step});
+    var data = json.decode(response.data);
+    if(data["status"]==true){
+      ChessBoard chessInfo=new ChessBoard.fromJson(jsonDecode(data["message"]));
+      print("yes recieved chessInfo: "+json.encode(chessInfo));
+      return chessInfo;
+    }else{
+      return null;
+    }
+  }
+
+  static Future<ChessBoard> restartGame(String token,String room) async {
+    Dio dio = new Dio();
+    Response response=await dio.post(getRestartGameUrl(),data:{"token":token,"game_id":room});
     var data = json.decode(response.data);
     if(data["status"]==true){
       ChessBoard chessInfo=new ChessBoard.fromJson(jsonDecode(data["message"]));

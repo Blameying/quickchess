@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quickchess/homeIdDialog.dart';
 import 'package:quickchess/chessPage.dart';
-import 'package:device_info/device_info.dart';
-import 'package:dio/dio.dart';
-import 'dart:convert';
 import 'dart:async';
 import 'package:quickchess/model/config.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -18,25 +15,31 @@ class _EnterPageState extends State<EnterPage>{
   String mac_address="";
   String token="";
   Timer timer;
+  HomeIdDialog dialog;
 
+  void runInTimer(Timer t) async {
+    if(mac_address.isEmpty){
+      mac_address= await Config.getDeviceId();
+    }else if(token.isEmpty){
+      token = await Config.getToken(mac_address);
+      dialog = new HomeIdDialog(text:"请输入房间号:",token: token);
+      setState(() {
+      });
+    }else{
+      Config.keepAlive(token);
+    }
+  }
   @override
   void initState(){
     super.initState();
-    timer = new Timer.periodic(new Duration(milliseconds: 300), (Timer t) async {
-      if(mac_address.isEmpty){
-        mac_address= await Config.getDeviceId();
-      }else if(token.isEmpty){
-        token = await Config.getToken(mac_address);
-        setState(() {
-        });
-      }else{
-        Config.keepAlive(token);
-      }
-    });
+    timer = new Timer.periodic(new Duration(milliseconds: 300), runInTimer);
   }
 
   @override
   Widget build(BuildContext context){
+    if(!timer.isActive){
+      timer = new Timer.periodic(new Duration(milliseconds: 300), runInTimer);
+    }
 
     return new Material(
       color: Color.fromARGB(255, 255, 252, 252),
@@ -80,10 +83,7 @@ class _EnterPageState extends State<EnterPage>{
                       context: context,
                       barrierDismissible: false,
                       builder: (BuildContext context){
-                        return new HomeIdDialog(
-                          text:"请输入房间号:",
-                          token: token,
-                        );
+                        return dialog;
                       }
                     );
                     },
