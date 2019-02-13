@@ -1,0 +1,10 @@
+[
+    {
+        "server": "http://47.100.124.210:4567/api/",
+        "login": "login",
+        "keepAlive": "keepalive",
+        "createRoom": "create/game",
+        "getGameInfo": "get/gameinfo",
+        "joinGame": "join/game"
+    }
+]
