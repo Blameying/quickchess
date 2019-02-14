@@ -9,6 +9,7 @@ class HomeIdDialog extends Dialog{
   final DataStore dataStore = new DataStore(text: "");
   String token;
   String holder="";
+  bool repeatPress=true;
 
   HomeIdDialog({Key key,@required String text,@required this.token}):super(key: key){
     this.dataStore.text = text;
@@ -83,6 +84,10 @@ class HomeIdDialog extends Dialog{
                 new Expanded(
                   child: new RaisedButton(
                     onPressed: () async {
+                      if(!repeatPress){
+                        return;
+                      }
+                      repeatPress=false;
                       if(controller.text.length==6){
                         //加入房间请求
                         if(token.isNotEmpty){
@@ -112,6 +117,7 @@ class HomeIdDialog extends Dialog{
                           textColor: Colors.black
                         );
                       }
+                      repeatPress=true;
                     },
                     child:Text(
                       "加入",

@@ -16,6 +16,7 @@ class _EnterPageState extends State<EnterPage>{
   String token="";
   Timer timer;
   HomeIdDialog dialog;
+  bool repeatPress=true;
 
   void runInTimer(Timer t) async {
     if(mac_address.isEmpty){
@@ -83,6 +84,10 @@ class _EnterPageState extends State<EnterPage>{
                 new RaisedButton(
                   child: Text("加入"),
                   onPressed: () async {
+                    if(!repeatPress){
+                      return;
+                    }
+                    repeatPress=false;
                     await showDialog(
                       context: context,
                       barrierDismissible: false,
@@ -90,6 +95,7 @@ class _EnterPageState extends State<EnterPage>{
                         return dialog;
                       }
                     );
+                    repeatPress=true;
                     },
                   color: Color.fromARGB(255, 255, 255, 255),
                   highlightColor: Color.fromARGB(255, 255, 110, 151),
@@ -100,6 +106,10 @@ class _EnterPageState extends State<EnterPage>{
                 new RaisedButton(
                   child: Text("创建"),
                   onPressed: () async {
+                    if(!repeatPress){
+                      return;
+                    }
+                    repeatPress=false;
                     var roomId = await Config.createRoom(token);
                     if(roomId.isNotEmpty){
                       timer.cancel();
@@ -121,6 +131,7 @@ class _EnterPageState extends State<EnterPage>{
                           textColor: Colors.black
                         );
                     }
+                    repeatPress=true;
                   },
                   color: Color.fromARGB(255, 255, 255, 255),
                   highlightColor: Color.fromARGB(255, 255, 110, 151),
