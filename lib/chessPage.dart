@@ -102,18 +102,17 @@ String judgeResult(List params){
 class ChessPage extends StatefulWidget{
   final String token;
   final String roomId;
-  final int charactor;
 
-  ChessPage(this.token,this.roomId,this.charactor);
+  ChessPage(this.token,this.roomId);
 
   @override
-  _ChessPageState createState()=>new _ChessPageState(token,roomId,charactor);
+  _ChessPageState createState()=>new _ChessPageState(token,roomId);
 }
 
 class _ChessPageState extends State<ChessPage>{
   final String token;
   final String roomId;
-  final int charactor;
+  int charactor;
   int numberOfPeople = 0;
   bool actionStatus=false;
   ChessBoard chessInfo;
@@ -147,6 +146,22 @@ class _ChessPageState extends State<ChessPage>{
     }
   }
 
+  int changeCharactor(){
+    int index = chessInfo.players.indexOf(token);
+    if(index==0){
+      return Config.player_1;
+    }else if(index==1){
+      return Config.player_2;
+    }else{
+      index=chessInfo.visitors.indexOf(token);
+      if(index!=-1){
+        return Config.visitor;
+      }
+    }
+
+    return Config.empty;
+  }
+
   Future<bool> fromEventToArray() async {
     for(var item in chessInfo.events){
       if(item[0]==Config.player_1){
@@ -157,42 +172,66 @@ class _ChessPageState extends State<ChessPage>{
     }
     return true;
   }
-  _ChessPageState(this.token,this.roomId,this.charactor);
+  _ChessPageState(this.token,this.roomId);
   @override
   void initState(){
     super.initState();
-    if(charactor==Config.player_1){
-      actionStatus=true;
-    }
+    charactor = Config.empty;
     timer = new Timer.periodic(new Duration(milliseconds: 300), (Timer t) async {
-
+      bool changed = false;
       try{
         chessInfo = await Config.getGameInfo(token, roomId);
       }catch(e){
         return;
       }
-      if(event.length>2 && chessInfo!=null && chessInfo.events.length==0){
-        setState(() {
+      
+      if(chessInfo!=null){
+        int temp = changeCharactor();
+        if(temp!=charactor){
+          charactor=temp;
+          changed=true;
+        }
+
+        int number;
+        if((number=chessInfo.players.length+chessInfo.visitors.length)!=numberOfPeople){
+          numberOfPeople=number;
+          changed=true;
+        }
+
+        if(event.length>2 && chessInfo.events.length==0){
           event=[];
           currentPoint=[];
           array=new List(15*15);
-        });
-      }
-      if(chessInfo!=null && chessInfo.events.length>event.length){
-        await fromEventToArray();
-        calculator();
-        setState(() {
+          changed=true;
+        }
+
+        if(chessInfo.events.length>event.length){
+          await fromEventToArray();
+          calculator();
           event=new List.from(chessInfo.events);
-          if(charactor!=Config.visitor && event.isNotEmpty && event.last[0]!=charactor){
-            actionStatus = true;
+          changed=true;
+        }
+
+        if((charactor==Config.player_1 || charactor==Config.player_2) 
+          && ((chessInfo.events.isEmpty && charactor==Config.player_1)
+          || chessInfo.events.isNotEmpty && charactor!=chessInfo.events.last[0])
+          ){
+            if(actionStatus!=true){
+              actionStatus=true;
+              changed=true;
+            }
           }else{
-            actionStatus = false;
+            if(actionStatus!=false){
+              actionStatus=false;
+              changed=true;
+            }
           }
-        });
-      }else if(chessInfo!=null && numberOfPeople!=(chessInfo.players.length+chessInfo.visitors.length)){
-        setState(() {
-          numberOfPeople = chessInfo.players.length+chessInfo.visitors.length;
-        });
+
+          if(changed){
+            setState(() {
+
+            });
+          }
       }
     });
   }
@@ -337,20 +376,6 @@ class _ChessPageState extends State<ChessPage>{
                       children: <Widget>[
                         new Expanded(
                           child: new Container(
-                            margin: new EdgeInsets.only(left: 30,right: 80),
-                            height: 45,
-                            decoration: new BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.all(
-                                    Radius.circular(8.0)
-                                )
-                            ),
-                            padding: new EdgeInsets.only(left: 5,top: 10),
-                            child: new Text(
-                              "信息",
-                              textDirection: TextDirection.ltr,
-                              style: TextStyle(fontSize: 20),
-                            ),
                           ),
                         ),
                         new Container(
@@ -360,7 +385,6 @@ class _ChessPageState extends State<ChessPage>{
                                 "确定",
                                 textDirection: TextDirection.ltr,
                               ),
-
                               onPressed: actionStatus? ()async{
                                 if(currentPoint.isNotEmpty){
                                   chessInfo=await Config.sendStepData(token, roomId, currentPoint);

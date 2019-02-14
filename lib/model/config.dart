@@ -8,6 +8,7 @@ class Config{
   static final int player_1 = 1;
   static final int player_2 = 2;
   static final int visitor = 3;
+  static final int empty = 100;
 
   Config();
 
@@ -48,10 +49,6 @@ class Config{
   static void keepAlive(String token) async {
     Dio dio = new Dio();
     Response response=await dio.post(getKeepAliveUrl(),data: {"token":token});
-    var data = json.decode(response.data);
-    if(data["status"]==true){
-      print("keep alive");
-    }
   }
 
   static Future<String> getToken(String mac) async {
@@ -94,6 +91,7 @@ class Config{
         return 0;
       }
     }else{
+      print(data);
       return 0;
     }
   }

@@ -26,6 +26,11 @@ class _EnterPageState extends State<EnterPage>{
       setState(() {
       });
     }else{
+      if(dialog!=null){
+        if(dialog.token.isEmpty){
+          token="";
+        }
+      }
       Config.keepAlive(token);
     }
   }
@@ -40,7 +45,6 @@ class _EnterPageState extends State<EnterPage>{
     if(!timer.isActive){
       timer = new Timer.periodic(new Duration(milliseconds: 300), runInTimer);
     }
-
     return new Material(
       color: Color.fromARGB(255, 255, 252, 252),
       child: new Column(
@@ -78,8 +82,8 @@ class _EnterPageState extends State<EnterPage>{
               children: <Widget>[
                 new RaisedButton(
                   child: Text("加入"),
-                  onPressed: (){
-                    showDialog(
+                  onPressed: () async {
+                    await showDialog(
                       context: context,
                       barrierDismissible: false,
                       builder: (BuildContext context){
@@ -98,13 +102,15 @@ class _EnterPageState extends State<EnterPage>{
                   onPressed: () async {
                     var roomId = await Config.createRoom(token);
                     if(roomId.isNotEmpty){
-                        timer.cancel();
-                        Navigator.push(
+                      timer.cancel();
+                      await Navigator.push(
                         context, 
                         new MaterialPageRoute(
-                          builder: (context) => new ChessPage(token,roomId,Config.player_1)
+                          builder: (context) => new ChessPage(token,roomId)
                         )
                       );
+                      token = "";
+                      print("token clear");
                     }else{
                       Fluttertoast.showToast(
                           msg: "请求失败，请检查网络",

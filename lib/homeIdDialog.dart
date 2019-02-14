@@ -7,7 +7,8 @@ import 'package:quickchess/model/config.dart';
 class HomeIdDialog extends Dialog{
   TextEditingController controller;
   final DataStore dataStore = new DataStore(text: "");
-  final String token;
+  String token;
+  String holder="";
 
   HomeIdDialog({Key key,@required String text,@required this.token}):super(key: key){
     this.dataStore.text = text;
@@ -77,11 +78,6 @@ class HomeIdDialog extends Dialog{
                         borderRadius: BorderRadius.circular(8.0)
                       )
                     ),
-                    onChanged: (String s){
-                      print(s);
-                      print(controller.value);
-                      print(controller.text);
-                    },
                   ),
                 ),
                 new Expanded(
@@ -100,9 +96,11 @@ class HomeIdDialog extends Dialog{
                             return;
                           }
                           Navigator.pop(context);
-                          Navigator.push(context, new MaterialPageRoute(
-                            builder: (context)=>new ChessPage(token,controller.text,id)
+                          await Navigator.push(context, new MaterialPageRoute(
+                            builder: (context)=>new ChessPage(token,controller.text)
                           ));
+                          token="";
+                          print("token clear");
                         }
                       }else{
                         Fluttertoast.showToast(
