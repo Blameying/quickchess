@@ -4,7 +4,7 @@ import 'package:quickchess/chessPage.dart';
 import 'dart:async';
 import 'package:quickchess/model/config.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
+import 'package:flutter/services.dart';
 
 class EnterPage extends StatefulWidget{
   @override
@@ -39,10 +39,12 @@ class _EnterPageState extends State<EnterPage>{
   void initState(){
     super.initState();
     timer = new Timer.periodic(new Duration(milliseconds: 300), runInTimer);
+    SystemChrome.setEnabledSystemUIOverlays([]);
   }
 
   @override
   Widget build(BuildContext context){
+    
     if(!timer.isActive){
       timer = new Timer.periodic(new Duration(milliseconds: 300), runInTimer);
     }
@@ -106,6 +108,7 @@ class _EnterPageState extends State<EnterPage>{
                 new RaisedButton(
                   child: Text("创建"),
                   onPressed: () async {
+                    bool state=false;
                     if(!repeatPress){
                       return;
                     }
@@ -119,8 +122,9 @@ class _EnterPageState extends State<EnterPage>{
                           builder: (context) => new ChessPage(token,roomId)
                         )
                       );
-                      token = "";
-                      print("token clear");
+                      token = await Config.getToken(mac_address);
+                      dialog = new HomeIdDialog(text:"请输入房间号:",token: token);
+                      state=true;
                     }else{
                       Fluttertoast.showToast(
                           msg: "请求失败，请检查网络",
@@ -130,6 +134,11 @@ class _EnterPageState extends State<EnterPage>{
                           backgroundColor: Colors.lightBlue,
                           textColor: Colors.black
                         );
+                    }
+                    if(state){
+                      setState(() {
+                        
+                      });
                     }
                     repeatPress=true;
                   },

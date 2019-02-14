@@ -7,6 +7,8 @@ import 'package:quickchess/model/config.dart';
 import 'package:quickchess/model/chessboard.dart';
 import 'package:positioned_tap_detector/positioned_tap_detector.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter/services.dart';
+
 
 
 String judgeResult(List params){
@@ -176,6 +178,7 @@ class _ChessPageState extends State<ChessPage>{
   @override
   void initState(){
     super.initState();
+    SystemChrome.setEnabledSystemUIOverlays([]);
     charactor = Config.empty;
     timer = new Timer.periodic(new Duration(milliseconds: 300), (Timer t) async {
       bool changed = false;
@@ -321,11 +324,24 @@ class _ChessPageState extends State<ChessPage>{
                                 )
                             ),
                             padding: EdgeInsets.fromLTRB(40, 30, 0, 0),
-                            child: new Text(
-                              roomId,
-                              textDirection: TextDirection.ltr,
-                              style: TextStyle(fontSize: 20),
-                            ),
+                            child: new GestureDetector(
+                              child: new Text(
+                                roomId,
+                                textDirection: TextDirection.ltr,
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              onLongPress: () async {
+                                Clipboard.setData(new ClipboardData(text: roomId));
+                                Fluttertoast.showToast(
+                                  msg: "已复制！",
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: ToastGravity.BOTTOM,
+                                  timeInSecForIos: 2,
+                                  backgroundColor: Colors.lightBlue,
+                                  textColor: Colors.white
+                                );
+                              },
+                            )
                           ),
                         ),
                         new Expanded(

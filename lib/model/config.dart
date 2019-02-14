@@ -71,6 +71,8 @@ class Config{
     if(data["status"]==true){
       result=data['message'];
       print("room was created successfully");
+    }else{
+      print("error:"+data.toString());
     }
     return result;
   }
