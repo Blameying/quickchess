@@ -9,4 +9,4 @@
 
 ![截图](https://github.com/Blameying/quickchess/raw/master/screenshot/1.png)
 ![截图](https://github.com/Blameying/quickchess/raw/master/screenshot/2.png)
-![截图](https://github.com/Blameying/quickchess/raw/master/screenshot/2.png)
+![截图](https://github.com/Blameying/quickchess/raw/master/screenshot/3.png)
