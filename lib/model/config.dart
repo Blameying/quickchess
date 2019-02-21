@@ -13,31 +13,31 @@ class Config{
   Config();
 
   static String getLoginUrl(){
-    return "http://47.100.124.210:4567/api/login";
+    return "";
   }
 
   static String getKeepAliveUrl(){
-    return "http://47.100.124.210:4567/api/keepalive";
+    return "";
   }
 
   static String createRoomUrl(){
-    return "http://47.100.124.210:4567/api/create/game";
+    return "";
   }
 
   static String getGameInfoUrl(){
-    return "http://47.100.124.210:4567/api/get/gameinfo";
+    return "";
   }
 
   static String getJoinGameUrl(){
-    return "http://47.100.124.210:4567/api/join/game";
+    return "";
   }
 
   static String getSendStepUrl(){
-    return "http://47.100.124.210:4567/api/send/gamestep";
+    return "";
   }
 
   static String getRestartGameUrl(){
-    return "http://47.100.124.210:4567/api/restart/game";
+    return "";
   }
 
   static Future<String> getDeviceId() async {
